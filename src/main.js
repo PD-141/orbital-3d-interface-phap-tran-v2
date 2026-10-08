@@ -25,7 +25,8 @@ try {
     alpha: false,
     powerPreference: 'high-performance'
   });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  const DPR = Math.min(devicePixelRatio || 1, 1.25);
+  renderer.setPixelRatio(DPR);
   renderer.setSize(innerWidth, innerHeight);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -34,17 +35,22 @@ try {
   root.prepend(renderer.domElement);
 
   const composer = new EffectComposer(renderer);
+  // V3: keep post-processing render targets deliberately smaller to avoid Chromium OOM.
+  composer.setPixelRatio(Math.min(DPR, 1.0));
   composer.addPass(new RenderPass(scene, camera));
   const bloom = new UnrealBloomPass(
-    new THREE.Vector2(innerWidth, innerHeight),
-    0.95,
+    new THREE.Vector2(Math.max(1, Math.floor(innerWidth * 0.5)), Math.max(1, Math.floor(innerHeight * 0.5))),
+    0.75,
     0.75,
     0.12
   );
   bloom.threshold = 0.12;
-  bloom.strength = 0.82;
-  bloom.radius = 0.8;
+  bloom.strength = 0.68;
+  bloom.radius = 0.65;
   composer.addPass(bloom);
+
+  // ---- V3 performance profile ----
+  // The visual language stays intact, but GPU-heavy render targets and geometry are capped.
 
   // ---- Lighting ----
   scene.add(new THREE.AmbientLight(0x49627d, 0.45));
@@ -227,7 +233,7 @@ try {
 
   // Zodiac / constellation glyphs around the outer boundary.
   const zodiac = ['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'];
-  function makeGlyphSprite(text, size = 96) {
+  function makeGlyphSprite(text, size = 64) {
     const c = document.createElement('canvas');
     c.width = c.height = size;
     const ctx = c.getContext('2d');
@@ -268,7 +274,7 @@ try {
     pts.forEach(([x,y]) => {
       const a = centerA + x * 0.16;
       const r = 7.15 + y * 0.28;
-      const star = new THREE.Mesh(new THREE.SphereGeometry(0.035 + (sector%3)*0.008, 8, 8), gold);
+      const star = new THREE.Mesh(new THREE.SphereGeometry(0.035 + (sector%3)*0.008, 5, 5), gold);
       star.position.set(Math.cos(a)*r, Math.sin(a)*r, 0.03);
       group.add(star);
     });
@@ -338,7 +344,7 @@ try {
     geometrySeal.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), spokeMaterial));
   }
 
-  function makeHexagramTexture(lines, size = 90) {
+  function makeHexagramTexture(lines, size = 56) {
     const c = document.createElement('canvas');
     c.width = c.height = size;
     const ctx = c.getContext('2d');
@@ -426,7 +432,7 @@ try {
 
   // ---- Core ----
   const coreShell = new THREE.Mesh(
-    new THREE.IcosahedronGeometry(1.55, 2),
+    new THREE.IcosahedronGeometry(1.55, 1),
     new THREE.MeshBasicMaterial({
       color: 0x07111c,
       wireframe: true,
@@ -437,7 +443,7 @@ try {
   core.add(coreShell);
 
   const coreInner = new THREE.Mesh(
-    new THREE.IcosahedronGeometry(0.78, 3),
+    new THREE.IcosahedronGeometry(0.78, 2),
     new THREE.MeshBasicMaterial({
       color: 0xffb84d,
       wireframe: true,
@@ -449,7 +455,7 @@ try {
   core.add(coreInner);
 
   const corePoint = new THREE.Mesh(
-    new THREE.SphereGeometry(0.32, 32, 32),
+    new THREE.SphereGeometry(0.32, 20, 16),
     new THREE.MeshBasicMaterial({
       color: 0xffefbd,
       transparent: true,
@@ -460,7 +466,7 @@ try {
   core.add(corePoint);
 
   // ---- Orbital rings ----
-  function createOrbit(radius, tube, tiltX, tiltZ, material, segments = 160) {
+  function createOrbit(radius, tube, tiltX, tiltZ, material, segments = 96) {
     const group = new THREE.Group();
     const torus = new THREE.Mesh(
       new THREE.TorusGeometry(radius, tube, 5, segments),
@@ -491,7 +497,7 @@ try {
   // Thin latitude / longitude shells
   for (let i = 0; i < 6; i++) {
     const shell = new THREE.Mesh(
-      new THREE.SphereGeometry(2.35 + i * 0.48, 32, 16),
+      new THREE.SphereGeometry(2.35 + i * 0.48, 20, 10),
       new THREE.MeshBasicMaterial({
         color: i % 2 ? 0x6da6ff : 0x73e6ff,
         wireframe: true,
@@ -529,7 +535,7 @@ try {
   }
 
   // ---- Star field ----
-  const starCount = 1900;
+  const starCount = 850;
   const starPositions = new Float32Array(starCount * 3);
   const starSizes = new Float32Array(starCount);
   for (let i = 0; i < starCount; i++) {
@@ -765,9 +771,11 @@ try {
     const h = innerHeight;
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setPixelRatio(DPR);
     renderer.setSize(w, h);
+    composer.setPixelRatio(Math.min(DPR, 1.0));
     composer.setSize(w, h);
+    bloom.resolution.set(Math.max(1, Math.floor(w * 0.5)), Math.max(1, Math.floor(h * 0.5)));
   }
   addEventListener('resize', resize);
 

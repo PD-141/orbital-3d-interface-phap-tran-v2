@@ -1,4 +1,4 @@
-# ORBITAL // Interactive 3D Interface
+# ORBITAL V3 // Pháp Trận GPU-Optimized Interface
 
 Một giao diện 3D tương tác kiểu futuristic được xây bằng **Three.js + Vite**.
 
@@ -85,3 +85,7 @@ Bạn có thể tăng:
 ## Ghi chú
 
 Three.js được cài từ npm và Vite bundle thành project production. Google Fonts được tải từ CDN khi trang chạy; nếu muốn hoàn toàn offline, có thể thay bằng font local.
+
+## V3 performance profile
+
+V3 preserves the layered Pháp Trận / Bát Quái / 64 quẻ visual system while reducing GPU pressure: capped DPR, smaller bloom render targets, fewer background stars, lower subdivision on selected meshes, and smaller canvas glyph textures.
