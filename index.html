@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#05070c" />
+    <meta name="description" content="Interactive 3D celestial magic formation with Bagua, I-Ching and zodiac layers." />
+    <title>CELESTIAL ARRAY // 3D PHÁP TRẬN</title>
+  </head>
+  <body>
+    <div id="app">
+      <div id="hud" aria-hidden="true">
+        <div class="brand">
+          <span class="brand-mark"></span>
+          <div>
+            <strong>CELESTIAL ARRAY</strong>
+            <small>PHÁP TRẬN / BÁT QUÁI / 64 QUẺ</small>
+          </div>
+        </div>
+
+        <div class="status">
+          <span class="status-dot"></span>
+          <span id="mode">AUTO ROTATION</span>
+        </div>
+
+        <div class="corner top-left"></div>
+        <div class="corner top-right"></div>
+        <div class="corner bottom-left"></div>
+        <div class="corner bottom-right"></div>
+
+        <div class="telemetry left">
+          <span>SYS // 03</span>
+          <span>CORE STABLE</span>
+          <span id="telemetrySpeed">ROT 0.18</span>
+        </div>
+
+        <div class="telemetry right">
+          <span id="telemetryX">X +000.0</span>
+          <span id="telemetryY">Y +000.0</span>
+          <span>LINK 100%</span>
+        </div>
+
+        <div class="hint">
+          <span>DRAG</span> TO ROTATE
+          <i></i>
+          <span>WHEEL</span> TO ZOOM
+        </div>
+      </div>
+
+      <div id="loading">
+        <div class="loader-ring"></div>
+        <span>INITIALIZING CELESTIAL ARRAY</span>
+      </div>
+
+      <div id="error" hidden></div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

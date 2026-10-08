@@ -1,0 +1,239 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap');
+
+:root {
+  color-scheme: dark;
+  --bg: #030509;
+  --fg: #e8edf7;
+  --muted: rgba(190, 205, 226, .55);
+  --line: rgba(160, 190, 230, .20);
+  --cyan: #72e7ff;
+  --blue: #4f8cff;
+  --violet: #a47cff;
+  --gold: #ffd88a;
+  --gold2: #fff0c7;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+  background: #050300;
+  overflow: hidden;
+}
+
+body {
+  font-family: Inter, system-ui, sans-serif;
+  color: var(--fg);
+  user-select: none;
+}
+
+#app {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  min-height: 520px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(110, 66, 18, .10), transparent 38%),
+    radial-gradient(circle at 50% 50%, rgba(255, 180, 70, .035), transparent 62%),
+    #030509;
+}
+
+canvas {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: none;
+}
+
+canvas.dragging { cursor: grabbing; }
+
+#hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.brand {
+  position: absolute;
+  top: 28px;
+  left: 32px;
+  display: flex;
+  gap: 11px;
+  align-items: center;
+  letter-spacing: .08em;
+}
+
+.brand-mark {
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--cyan);
+  border-radius: 50%;
+  box-shadow: 0 0 16px rgba(114, 231, 255, .65);
+}
+
+.brand strong {
+  display: block;
+  font: 700 13px/1 Space Mono, monospace;
+}
+
+.brand small {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+  font: 400 8px/1 Space Mono, monospace;
+  letter-spacing: .17em;
+}
+
+.status {
+  position: absolute;
+  top: 32px;
+  right: 34px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: rgba(220, 232, 248, .7);
+  font: 700 9px/1 Space Mono, monospace;
+  letter-spacing: .12em;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #72e7ff;
+  box-shadow: 0 0 11px #72e7ff;
+}
+
+.corner {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-color: rgba(170, 205, 240, .28);
+}
+.corner.top-left { left: 25px; top: 72px; border-left: 1px solid; border-top: 1px solid; }
+.corner.top-right { right: 25px; top: 72px; border-right: 1px solid; border-top: 1px solid; }
+.corner.bottom-left { left: 25px; bottom: 34px; border-left: 1px solid; border-bottom: 1px solid; }
+.corner.bottom-right { right: 25px; bottom: 34px; border-right: 1px solid; border-bottom: 1px solid; }
+
+.telemetry {
+  position: absolute;
+  bottom: 42px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: rgba(183, 201, 224, .42);
+  font: 400 8px/1.2 Space Mono, monospace;
+  letter-spacing: .1em;
+}
+.telemetry.left { left: 34px; }
+.telemetry.right { right: 34px; text-align: right; }
+
+.hint {
+  position: absolute;
+  left: 50%;
+  bottom: 38px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  color: rgba(194, 210, 231, .35);
+  font: 400 8px/1 Space Mono, monospace;
+  letter-spacing: .1em;
+}
+.hint span { color: rgba(221, 236, 255, .7); }
+.hint i {
+  width: 1px;
+  height: 10px;
+  margin: 0 7px;
+  background: rgba(180, 204, 235, .25);
+}
+
+#loading {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-content: center;
+  gap: 15px;
+  background: #030509;
+  color: rgba(218, 230, 246, .65);
+  font: 400 9px/1 Space Mono, monospace;
+  letter-spacing: .17em;
+  transition: opacity .8s ease, visibility .8s ease;
+}
+#loading.done { opacity: 0; visibility: hidden; }
+
+.loader-ring {
+  width: 36px;
+  height: 36px;
+  margin: auto;
+  border: 1px solid rgba(114, 231, 255, .18);
+  border-top-color: rgba(114, 231, 255, .9);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+#error {
+  position: absolute;
+  z-index: 30;
+  inset: 20px;
+  display: grid;
+  place-items: center;
+  padding: 30px;
+  color: #ffb9b9;
+  background: rgba(30, 5, 8, .92);
+  border: 1px solid rgba(255, 120, 120, .3);
+  font: 12px/1.6 Space Mono, monospace;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .brand { top: 19px; left: 20px; }
+  .status { top: 23px; right: 20px; }
+  .corner.top-left { left: 15px; top: 58px; }
+  .corner.top-right { right: 15px; top: 58px; }
+  .corner.bottom-left { left: 15px; bottom: 22px; }
+  .corner.bottom-right { right: 15px; bottom: 22px; }
+  .telemetry { bottom: 30px; }
+  .telemetry.left { left: 20px; }
+  .telemetry.right { right: 20px; }
+  .hint { bottom: 82px; font-size: 7px; }
+}
+
+
+/* The interface is visual only; pointer events pass through to the 3D canvas. */
+#hud, #hud * { pointer-events: none; }
+
+#app::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 50%, transparent 22%, rgba(0,0,0,.12) 58%, rgba(0,0,0,.58) 100%),
+    repeating-radial-gradient(circle at 50% 50%, rgba(255,210,140,.018) 0 1px, transparent 1px 8px);
+  mix-blend-mode: screen;
+}
+
+
+/* Mystical formation styling */
+#app::after {
+  content: "";
+  position: absolute;
+  inset: 3.2%;
+  z-index: 3;
+  pointer-events: none;
+  border: 1px solid rgba(255, 202, 116, .20);
+  box-shadow: inset 0 0 55px rgba(255, 153, 48, .035), 0 0 25px rgba(255, 179, 70, .025);
+}
